@@ -1,0 +1,35 @@
+﻿<Window x:Class="exxis_localizacion.FormModeloVistas"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:exxis_localizacion"
+        mc:Ignorable="d"
+        Title="Importar vistas" Height="340" Width="550"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="SingleBorderWindow"
+        SourceInitialized="Window_SourceInitialized">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Vertical" >
+            <TextBlock Text="Importar las vistas desde el cliente SAP Business One" Margin="0 10"></TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/exxis_localizacion;component/resources/imgs/modelzipicono.png" Stretch="UniformToFill" Width="35" Height="35" Margin="0 0 40 0"></Image>
+                <Image Source="/exxis_localizacion;component/resources/imgs/blackArrow.png" Stretch="UniformToFill" Width="20" Height="20" Margin="0 0 40 0"></Image>
+                <Image Source="/exxis_localizacion;component/resources/imgs/SAPHANAModelManagement.png" Stretch="UniformToFill"></Image>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 10 0 0">
+                <Button Name="btnVerUbicacion" Margin="0 10" Padding="5 0" Click="btnVerUbicacion_Click" Width="100">Ver ubicación</Button>
+                <Button Name="btnContinuar" Margin="50 10" Padding="5 0" Click="btnContinuar_Click" Width="180">Ya están importadas. Continuar!</Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

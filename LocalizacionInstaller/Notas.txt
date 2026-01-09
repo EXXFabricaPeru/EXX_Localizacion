@@ -1,0 +1,90 @@
+PENDIENTES
+==========
+- Ajustar query de busqueda de menú para los casos de Reporte en Sección de Reportes Perdidos. El reporte existe pero no el menú. al interntar crear Reporte lanza ERROR.	
+- Implementar importación de datos de tablas.
+- revisar problema con mostrado de tablas hijas en datos de objetos de usuario al cambiar la selección de registro de cabecera.
+- Revisar descarga simultanea de recursos. excepción en acceso multiple a archivo de credenciales.
+- Revisar problema con carga de ReporDocument (Crystal)
+- mostrar mensaje creación o actualización al ejecutar estructura.
+- Reutilizar método de libreria Exxis para migrar datos de objeto via xml.
+
+HECHOS
+======
+- Panel mostrando error en la descarga de objetos.
+- permitir volver a descargar datos en error.
+- Carga de archivos Crystal. (3)
+		Finanzas/Informes financieros/Libros Legales/01 Caja y bancos...
+														01.01 - .rpt
+														01.02 - .rpt
+														...
+		Finanzas/Informes financieros/Libros Legales/03 Inventario y balanace...
+		.....
+- Implementar creación de objeto antes de creación de campo vinculado a objeto.
+- Esquematizar estructura de paquete en Drive (Localización, Reportes Legales, etc...)
+- revisar problema con campo de usuario ARC2.EXX_SUJPER y valor por defecto.
+- revisar errores de importación para el paso de carga de campos.
+- Mostrar detalles de datos objeto (tablas hijas)
+- Ejecutar instalación de objetos según paquete seleccionado.
+- Mostrar nombre de paquete que se está ejecutando en pantalla de progreso de ejecución.
+- Implementar botón [recargar] en cada pestaña.
+- Ajustar selección de primera tabla de datos de objeto de la ficha de datos de objetos. Evitar que se muestre en blanco al seleccinar dicha ficha.
+- ajustar sincronización de listado de Scripts, Crystal y GEP. Actualmente sólo se actualiza la lista cuando se cambia de tab de Paquete.
+- Mostrar detalle de Objetos Gestor Consultas.
+- Reemplazo de nombre de paquete de vista estandar por nuevo nombre de paquete generado. (2)
+- Condicioens muestra de cajas de texto para cambi ode nombre de paquete sólo para HANA.
+- Ejecutar reemplazo de nombre de paquete de vista.
+- Carga de vistas (colocar pausa para descargar vista cargar)
+	- Crear archivo de model.zip con content_package_tools
+	- Habilitar Analitycs en Enablement
+	- Cargar vía Gestión de modelo de SAP HANA
+- habilitar botón de iniciar proceso una vez haya terminado de carga todas las pestañas.
+- Corregir problema con ventana de cambios en la bd para cerrar automáticamente. Entra en conflicto con la creación de Menus.
+- discriminar conexión HANA antes descargar o procesar Vistas.
+- Remplazo de paquete en UserQueries.
+- Ordenar descarga de Scripts según nombre.
+- Revisar errores en HANA.
+- Habilitar botón Finalizar proceso de ejecución sólo cuando haya terminado.
+- Validar que aplicación solamente funciona con Idioma Español Latino o Ingles.
+
+-------------------------------------------------------------------------------------------------------
+A. CAMPOS DE USUARIO:
+	1. Procurar que la columna FieldID coincida entre la hoja cabecera y la hoja de valores válidos.
+	2. SAP B1 DI API indica que la tabla OPBU no existe.
+	3. Ajustar el tamaño de tipo númerico AITM.EXX_TransId
+	4. Revisar subtipo de @EXX_DBMOD21.EXX_IMPINSADED
+B. OBJETOS DE USUARIO:
+	1. Colocar el valor definido para las columnas con Enumeraciones. Ejm.
+		Columna: ManageSeries = Y -> Incorrecto
+				 ManageSeries = tYES -> CORRECTO!
+	!!!!!!!!!!!!!!!!Replicar para todas las tablas!!!!!!!!!!!!!!!!!!!!!!!!!!
+C. CSHS - Busquedas formateadas.
+	1. Se de incluir el id query como dice la tabla y no el nombre del query. El nombre es repetible entre categorías, pero el id no.
+D. DATOS DE TABLAS DE USUARIO.
+	1. Actualmente no existe ninguna. UTilizar una hoja de cálculo específica para ello.
+E. DATOS DE OBJETOS DE USUARIO.
+	1. Unir los datos de objetos en una sola hoja de cálculo o crear una hoja de cálculo por cada objeto con sus respetivas tabls hijas por hoja.
+F. GEP.
+	1. Incluir formatos electrónicos en una carpeta.
+G. Incluir carpeta de crystals.
+H. Separar paquetes? Si! Esta es la estructura
+	PAQUETE
+		PLANTILLAS
+			EXX_TABLAS_USUARIO
+			EXX_CAMPOS_DE_USUARIO
+			EXX_OBJETOS_DE_USUARIO
+			EXX_DATOS_TABLAS
+			EXX_DATOS_OBJETOS
+			EXX_GESTOR_CONSULTAS
+		VISTAS
+			model.zip
+		RPT
+			HANA				
+			MSSQL
+		SCRIPTS
+			HANA
+			MSSQL	
+		GEP
+
+
+
+			

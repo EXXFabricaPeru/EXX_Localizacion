@@ -1,0 +1,12 @@
+D:\Trabajo\Exxis\Biztools\exxis_biztools-master\LocalizacionInstaller\ExxisBibliotecaClases\bin\x86\Debug\ExxisBibliotecaClases.dll
+D:\Trabajo\Exxis\Biztools\exxis_biztools-master\LocalizacionInstaller\ExxisBibliotecaClases\bin\x86\Debug\ExxisBibliotecaClases.pdb
+D:\Trabajo\Exxis\Biztools\exxis_biztools-master\LocalizacionInstaller\ExxisBibliotecaClases\bin\x86\Debug\DotNetZip.dll
+D:\Trabajo\Exxis\Biztools\exxis_biztools-master\LocalizacionInstaller\ExxisBibliotecaClases\bin\x86\Debug\SAPBusinessOneSDK.dll
+D:\Trabajo\Exxis\Biztools\exxis_biztools-master\LocalizacionInstaller\ExxisBibliotecaClases\bin\x86\Debug\DotNetZip.pdb
+D:\Trabajo\Exxis\Biztools\exxis_biztools-master\LocalizacionInstaller\ExxisBibliotecaClases\bin\x86\Debug\DotNetZip.xml
+D:\Trabajo\Exxis\Biztools\exxis_biztools-master\LocalizacionInstaller\ExxisBibliotecaClases\bin\x86\Debug\log4net.xml
+D:\Trabajo\Exxis\Biztools\exxis_biztools-master\LocalizacionInstaller\ExxisBibliotecaClases\obj\x86\Debug\ExxisBibliotecaClases.csproj.AssemblyReference.cache
+D:\Trabajo\Exxis\Biztools\exxis_biztools-master\LocalizacionInstaller\ExxisBibliotecaClases\obj\x86\Debug\ExxisBibliotecaClases.csproj.CoreCompileInputs.cache
+D:\Trabajo\Exxis\Biztools\exxis_biztools-master\LocalizacionInstaller\ExxisBibliotecaClases\obj\x86\Debug\ExxisBib.DFAC0638.Up2Date
+D:\Trabajo\Exxis\Biztools\exxis_biztools-master\LocalizacionInstaller\ExxisBibliotecaClases\obj\x86\Debug\ExxisBibliotecaClases.dll
+D:\Trabajo\Exxis\Biztools\exxis_biztools-master\LocalizacionInstaller\ExxisBibliotecaClases\obj\x86\Debug\ExxisBibliotecaClases.pdb
