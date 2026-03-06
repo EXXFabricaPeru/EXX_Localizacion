@@ -1,0 +1,687 @@
+﻿<UserControl x:Class="exxis_localizacion.ControlPaquete"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:exxis_localizacion"
+             xmlns:util="clr-namespace:exxis_localizacion.util"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" >
+    <Grid>
+        <TabControl SelectedIndex="{Binding SelectedItem, Mode=TwoWay}">
+            <TabItem Visibility="{Binding TablasUsuarioExiste}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <MediaElement x:Name="tbTablas" Source="{Binding Path=IndicadorTablas.IndicadorIcon}" Stretch="None" MediaEnded="tab_MediaEnded" LoadedBehavior="Play" UnloadedBehavior="Manual" Height="10" Width="10">
+                            <MediaElement.OpacityMask>
+                                <ImageBrush ImageSource="resources/imgs/gray-light.png"/>
+                            </MediaElement.OpacityMask>
+                        </MediaElement>
+                        <TextBlock Text="Tablas" Margin="3 0 0 0"></TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid Margin="10">
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorTablas.LoaderZIndex}" Background="White">
+                        <MediaElement LoadedBehavior="Play" UnloadedBehavior="Manual" Source="resources/imgs/downloading.gif" Width="100" Height="100" MediaEnded="download_MediaEnded"/>
+                    </Grid>
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorTablas.ErrorZIndex}" Background="White" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="2" Grid.Column="1" TextWrapping="WrapWithOverflow" Text="{Binding Path=IndicadorTablas.ErrorMensaje}" TextAlignment="Center"/>
+                        <Image Source="/exxis_localizacion;component/resources/imgs/error_download.png" Grid.Row="1" Grid.Column="1"></Image>
+                        <Button Grid.Row="3" Grid.Column="1" Width="100" Margin="10" Click="DescargarTablas">Recargar</Button>
+                    </Grid>
+                    <DataGrid Name="dgvTablas" AutoGenerateColumns="False" ItemsSource="{Binding ListaTablas}"
+                              CanUserAddRows="False" HeadersVisibility="Column" CanUserDeleteRows="False" 
+                              CanUserReorderColumns="False" CanUserSortColumns="False" Panel.ZIndex="{Binding Path=IndicadorTablas.GridZIndex}" >
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Binding="{Binding Check}" Header="Check"/>
+                            <DataGridTextColumn Binding="{Binding Path=O.Nombre}" IsReadOnly="true" Header="TableName"/>
+                            <DataGridTextColumn Binding="{Binding Path=O.Descripcion}" IsReadOnly="true" Header="Description"/>
+                            <DataGridTextColumn Binding="{Binding Path=O.Tipo}" IsReadOnly="true" Header="Type"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Visibility="{Binding CamposUsuarioExiste}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <MediaElement x:Name="tbCampos" Source="{Binding Path=IndicadorCampos.IndicadorIcon}" Stretch="None" MediaEnded="tab_MediaEnded" LoadedBehavior="Play" UnloadedBehavior="Manual" Height="10" Width="10">
+                            <MediaElement.OpacityMask>
+                                <ImageBrush ImageSource="resources/imgs/gray-light.png"/>
+                            </MediaElement.OpacityMask>
+                        </MediaElement>
+                        <TextBlock Text="Campos" Margin="3 0 0 0"></TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid Margin="10" >
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorCampos.LoaderZIndex}" Background="White">
+                        <MediaElement LoadedBehavior="Play" UnloadedBehavior="Manual" Source="resources/imgs/downloading.gif" Width="100" Height="100" MediaEnded="download_MediaEnded"/>
+                    </Grid>
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorCampos.ErrorZIndex}" Background="White" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="2" Grid.Column="1" TextWrapping="WrapWithOverflow" Text="{Binding Path=IndicadorCampos.ErrorMensaje}" TextAlignment="Center"/>
+                        <Image Source="/exxis_localizacion;component/resources/imgs/error_download.png" Grid.Row="1" Grid.Column="1"></Image>
+                        <Button Grid.Row="3" Grid.Column="1" Width="100" Margin="10" Click="DescargarCampos">Recargar</Button>
+                    </Grid>
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorCampos.GridZIndex}" Background="White">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="3*"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        <DataGrid Name="dgvCampos" SelectedItem="{Binding Path=SelectedCampoUsuario,Mode=OneWayToSource}"
+                                  AutoGenerateColumns="False" ItemsSource="{Binding ListaCampos}" Margin="0 0 0 10"
+                                  CanUserAddRows="False" HeadersVisibility="Column" CanUserDeleteRows="False" SelectionMode="Single"
+                                  CanUserReorderColumns="False" CanUserSortColumns="False" Grid.Row="0">
+                            <DataGrid.Columns>
+                                <DataGridCheckBoxColumn Binding="{Binding Check}" Header="Check"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.Tabla}" IsReadOnly="true" Header="TableName"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.Codigo}" IsReadOnly="true" Header="AliasID"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.Descripcion}" IsReadOnly="true" Header="Description"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.Tipo}" IsReadOnly="true" Header="Type"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.Tamaño}" IsReadOnly="true" Header="Size"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.SubTipo}" IsReadOnly="true" Header="SubType"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.TamañoEditable}" IsReadOnly="true" Header="EditSize"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.DefaultValue}" IsReadOnly="true" Header="DefaultValue"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.Mandatory}" IsReadOnly="true" Header="Mandatory"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.LinkedTable}" IsReadOnly="true" Header="LinkedTable"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.LinkedUDO}" IsReadOnly="true" Header="LinkedUDO"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <DataGrid Name="dgvValValids" SelectionMode="Single"
+                                  AutoGenerateColumns="False" ItemsSource="{Binding Path=SelectedCampoUsuario.O.ValoresValidos}"
+                                  CanUserAddRows="False" HeadersVisibility="Column" CanUserDeleteRows="False" 
+                                  CanUserReorderColumns="False" CanUserSortColumns="False" Grid.Row="1">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Binding="{Binding Valor}" IsReadOnly="true" Header="Value"/>
+                                <DataGridTextColumn Binding="{Binding Descripcion}" IsReadOnly="true" Header="Description"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Visibility="{Binding ObjetosUsuarioExiste}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <MediaElement x:Name="tbObjetos" Source="{Binding Path=IndicadorObjetos.IndicadorIcon}" Stretch="None" MediaEnded="tab_MediaEnded" LoadedBehavior="Play" UnloadedBehavior="Manual" Height="10" Width="10">
+                            <MediaElement.OpacityMask>
+                                <ImageBrush ImageSource="resources/imgs/gray-light.png"/>
+                            </MediaElement.OpacityMask>
+                        </MediaElement>
+                        <TextBlock Text="Objetos" Margin="3 0 0 0"></TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid Margin="10" >
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorObjetos.LoaderZIndex}" Background="White">
+                        <MediaElement LoadedBehavior="Play" UnloadedBehavior="Manual" Source="resources/imgs/downloading.gif" Width="100" Height="100" MediaEnded="download_MediaEnded"/>
+                    </Grid>
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorObjetos.ErrorZIndex}" Background="White" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="2" Grid.Column="1" TextWrapping="WrapWithOverflow" Text="{Binding Path=IndicadorObjetos.ErrorMensaje}" TextAlignment="Center"/>
+                        <Image Source="/exxis_localizacion;component/resources/imgs/error_download.png" Grid.Row="1" Grid.Column="1"></Image>
+                        <Button Grid.Row="3" Grid.Column="1" Width="100" Margin="10" Click="DescargarObjetos">Recargar</Button>
+                    </Grid>
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorObjetos.GridZIndex}" Background="White">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="3*"/>
+                        </Grid.RowDefinitions>
+                        <DataGrid Name="dgvObjetos" AutoGenerateColumns="False" ItemsSource="{Binding ListaObjetos}"
+                                  CanUserAddRows="False" HeadersVisibility="Column" CanUserDeleteRows="False" Margin="0 0 0 10"
+                                  CanUserReorderColumns="False" CanUserSortColumns="False" SelectedItem="{Binding Path=SelectedObjetoUsuario,Mode=OneWayToSource}">
+                            <DataGrid.Columns>
+                                <DataGridCheckBoxColumn Binding="{Binding Check}" Header="Check"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.CodeObjeto}" IsReadOnly="true" Header="Code"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.NameObjeto}" IsReadOnly="true" Header="Name"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.TablaPadre}" IsReadOnly="true" Header="TableName"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.TablaLog}" IsReadOnly="true" Header="LogTableName"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.Tipo}" IsReadOnly="true" Header="ObjectType"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.ManageSeries}" IsReadOnly="true" Header="ManageSeries"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.CanDelete}" IsReadOnly="true" Header="CanDelete"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.CanClose}" IsReadOnly="true" Header="CanClose"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.CanCancel}" IsReadOnly="true" Header="CanCancel"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.ExtensionName}" IsReadOnly="true" Header="ExtensionName"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.CanFind}" IsReadOnly="true" Header="CanFind"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.CanYearTransfer}" IsReadOnly="true" Header="CanYearTransfer"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.CanCreateDefaultForm}" IsReadOnly="true" Header="CanCreateDefaultForm"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.CanLog}" IsReadOnly="true" Header="CanLog"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.OverwriteDllfile}" IsReadOnly="true" Header="OverwriteDllfile"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.UseUniqueFormType}" IsReadOnly="true" Header="UseUniqueFormType"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.CanArchive}" IsReadOnly="true" Header="CanArchive"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.MenuItem}" IsReadOnly="true" Header="MenuItem"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.MenuCaption}" IsReadOnly="true" Header="MenuCaption"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.FatherMenuID}" IsReadOnly="true" Header="FatherMenuID"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.Position}" IsReadOnly="true" Header="Position"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.MenuUID}" IsReadOnly="true" Header="MenuUID"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.EnableEnhancedForm}" IsReadOnly="true" Header="EnableEnhancedForm"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.RebuildEnhancedForm}" IsReadOnly="true" Header="RebuildEnhancedForm"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.FormSRF}" IsReadOnly="true" Header="FormSRF" MaxWidth="100"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.CanApprove}" IsReadOnly="true" Header="CanApprove"/>
+                                <DataGridTextColumn Binding="{Binding Path=O.TemplateID}" IsReadOnly="true" Header="TemplateID"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <TabControl Grid.Row="1" >
+                            <TabItem Header="ChildTables">
+                                <DataGrid ItemsSource="{Binding Path=SelectedObjetoUsuario.O.ChildTables}" AutoGenerateColumns="False"
+                                          CanUserAddRows="False" HeadersVisibility="Column" CanUserDeleteRows="False"
+                                          CanUserReorderColumns="False" CanUserSortColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="ObjectName" Binding="{Binding Path=ObjectName}"/>
+                                        <DataGridTextColumn Header="TableName" Binding="{Binding Path=TableName}"/>
+                                        <DataGridTextColumn Header="LogTableName" Binding="{Binding Path=LogTableName}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </TabItem>
+                            <TabItem Header="FindColumns">
+                                <DataGrid ItemsSource="{Binding Path=SelectedObjetoUsuario.O.ListaUDO2}" AutoGenerateColumns="False"
+                                          CanUserAddRows="False" HeadersVisibility="Column" CanUserDeleteRows="False"
+                                          CanUserReorderColumns="False" CanUserSortColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="ColumnAlias" Binding="{Binding Path=ColAlias}"/>
+                                        <DataGridTextColumn Header="ColumnDescription" Binding="{Binding Path=ColDesc}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </TabItem>
+                            <TabItem Header="FormColumns">
+                                <DataGrid ItemsSource="{Binding Path=SelectedObjetoUsuario.O.ListaUDO3}" AutoGenerateColumns="False"
+                                          CanUserAddRows="False" HeadersVisibility="Column" CanUserDeleteRows="False"
+                                          CanUserReorderColumns="False" CanUserSortColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="FormColumnAlias" Binding="{Binding Path=ColAlias}"/>
+                                        <DataGridTextColumn Header="FormColumnDescription" Binding="{Binding Path=ColDesc}"/>
+                                        <DataGridTextColumn Header="SonNumber" Binding="{Binding Path=SonNum}"/>
+                                        <DataGridTextColumn Header="Editable" Binding="{Binding Path=CanEdit}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </TabItem>
+                            <TabItem Header="EnhancedFormColumns">
+                                <DataGrid ItemsSource="{Binding Path=SelectedObjetoUsuario.O.ListaUDO4}" AutoGenerateColumns="False"
+                                          CanUserAddRows="False" HeadersVisibility="Column" CanUserDeleteRows="False"
+                                          CanUserReorderColumns="False" CanUserSortColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="ColumnNumber" Binding="{Binding Path=ColNum}"/>
+                                        <DataGridTextColumn Header="ColumnAlias" Binding="{Binding Path=ColAlias}"/>
+                                        <DataGridTextColumn Header="ColumnDescription" Binding="{Binding Path=ColDesc}"/>
+                                        <DataGridTextColumn Header="ChildNumber" Binding="{Binding Path=SonNum}"/>
+                                        <DataGridTextColumn Header="ColumnIsUsed" Binding="{Binding Path=ColIsUsed}"/>
+                                        <DataGridTextColumn Header="Editable" Binding="{Binding Path=ColEdit}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </TabItem>
+                        </TabControl>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Visibility="{Binding DatosTablasExiste}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <MediaElement x:Name="tbDataTablas" Source="{Binding Path=IndicadorDatosTablas.IndicadorIcon}" Stretch="None" MediaEnded="tab_MediaEnded" LoadedBehavior="Play" UnloadedBehavior="Manual" Height="10" Width="10">
+                            <MediaElement.OpacityMask>
+                                <ImageBrush ImageSource="resources/imgs/gray-light.png"/>
+                            </MediaElement.OpacityMask>
+                        </MediaElement>
+                        <TextBlock Text="Datos tablas" Margin="3 0 0 0"></TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid Margin="10" >
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorDatosTablas.LoaderZIndex}" Background="White">
+                        <MediaElement LoadedBehavior="Play" UnloadedBehavior="Manual" Source="resources/imgs/downloading.gif" Width="100" Height="100" MediaEnded="download_MediaEnded"/>
+                    </Grid>
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorDatosTablas.ErrorZIndex}" Background="White" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Path=IndicadorDatosTablas.ErrorMensaje}" Grid.Row="2" Grid.Column="1" TextWrapping="WrapWithOverflow" TextAlignment="Center"/>
+                        <Image Source="/exxis_localizacion;component/resources/imgs/error_download.png" Grid.Row="1" Grid.Column="1"></Image>
+                        <Button Grid.Row="3" Grid.Column="1" Width="100" Margin="10" Click="DescargarDatosTablas">Recargar</Button>
+                    </Grid>
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorDatosTablas.GridZIndex}" Background="White">
+                        <DataGrid Name="dgvTblData" AutoGenerateColumns="True">
+
+                        </DataGrid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Visibility="{Binding DatosObjetosExiste}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <MediaElement Source="{Binding Path=IndicadorDatosObjetos.IndicadorIcon}" Stretch="None" MediaEnded="tab_MediaEnded" LoadedBehavior="Play" UnloadedBehavior="Manual" Height="10" Width="10">
+                            <MediaElement.OpacityMask>
+                                <ImageBrush ImageSource="resources/imgs/gray-light.png"/>
+                            </MediaElement.OpacityMask>
+                        </MediaElement>
+                        <TextBlock Text="Datos objetos" Margin="3 0 0 0"></TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid Margin="10" >
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorDatosObjetos.LoaderZIndex}" Background="White">
+                        <MediaElement LoadedBehavior="Play" UnloadedBehavior="Manual" Source="resources/imgs/downloading.gif" Width="100" Height="100" MediaEnded="download_MediaEnded"/>
+                    </Grid>
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorDatosObjetos.ErrorZIndex}" Background="White" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Path=IndicadorDatosObjetos.ErrorMensaje}" Grid.Row="2" Grid.Column="1" TextWrapping="WrapWithOverflow" TextAlignment="Center"/>
+                        <Image Source="/exxis_localizacion;component/resources/imgs/error_download.png" Grid.Row="1" Grid.Column="1"></Image>
+                        <Button Grid.Row="3" Grid.Column="1" Width="100" Margin="10" Click="DescargarDatosObjetos">Recargar</Button>
+                    </Grid>
+                    <TabControl ItemsSource="{Binding Path=ListaDatosObjetos}" Panel.ZIndex="{Binding Path=IndicadorDatosObjetos.GridZIndex}" 
+                                SelectedIndex="{Binding DatosObjetosSelectedIndex,Mode=TwoWay}" Background="White">
+                        <TabControl.ItemContainerStyle>
+                            <Style TargetType="TabItem">
+                                <Setter Property="Header" Value="{Binding Path=O.Codigo}" />
+                            </Style>
+                        </TabControl.ItemContainerStyle>
+                        <TabControl.ContentTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="auto"/>
+                                    </Grid.RowDefinitions>
+                                    <util:DatosObjetoGridView AutoGenerateColumns="False" HeadersVisibility="Column"
+                                         ColumnHeaders="{Binding Path=O.Columnas}" ItemsSource="{Binding Path=O.Registros}" SourceField="Campos"                                                            
+                                         CanUserAddRows="False" IsReadOnly="True" Grid.Row="0" SelectedItem="{Binding Selected,Mode=OneWayToSource}">
+                                    </util:DatosObjetoGridView>
+                                    <TabControl Grid.Row="1" ItemsSource="{Binding Path=Selected.TablasHijas}" Height="150">
+                                        <TabControl.ItemContainerStyle>
+                                            <Style TargetType="TabItem">
+                                                <Setter Property="Header" Value="{Binding Path=Nombre}" />
+                                            </Style>
+                                        </TabControl.ItemContainerStyle>
+                                        <TabControl.Style>
+                                            <Style TargetType="{x:Type TabControl}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Path=Selected.HasChilds}" Value="True">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TabControl.Style>
+                                        <TabControl.ContentTemplate>
+                                            <DataTemplate>
+                                                <util:DatosObjetoGridView AutoGenerateColumns="False" HeadersVisibility="Column"
+                                                     ColumnHeaders="{Binding Path=Columnas}" ItemsSource="{Binding Path=Registros}"                                                                
+                                                     CanUserAddRows="False" IsReadOnly="True">
+                                                </util:DatosObjetoGridView>
+                                            </DataTemplate>
+                                        </TabControl.ContentTemplate>
+                                    </TabControl>
+                                </Grid>
+                            </DataTemplate>
+                        </TabControl.ContentTemplate>
+                    </TabControl>
+                </Grid>
+            </TabItem>
+            <TabItem Visibility="{Binding GestorConsultasExiste}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <MediaElement Source="{Binding Path=IndicadorGestorConsultas.IndicadorIcon}" Stretch="None" MediaEnded="tab_MediaEnded" LoadedBehavior="Play" UnloadedBehavior="Manual" Height="10" Width="10">
+                            <MediaElement.OpacityMask>
+                                <ImageBrush ImageSource="resources/imgs/gray-light.png"/>
+                            </MediaElement.OpacityMask>
+                        </MediaElement>
+                        <TextBlock Text="Gestor Consultas" Margin="3 0 0 0"></TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid Margin="10">
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorGestorConsultas.LoaderZIndex}" Background="White">
+                        <MediaElement LoadedBehavior="Play" UnloadedBehavior="Manual" Source="resources/imgs/downloading.gif" Width="100" Height="100" MediaEnded="download_MediaEnded"/>
+                    </Grid>
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorGestorConsultas.ErrorZIndex}" Background="White" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Path=IndicadorGestorConsultas.ErrorMensaje}" Grid.Row="2" Grid.Column="1" TextWrapping="WrapWithOverflow" TextAlignment="Center"/>
+                        <Image Source="/exxis_localizacion;component/resources/imgs/error_download.png" Grid.Row="1" Grid.Column="1"></Image>
+                        <Button Grid.Row="3" Grid.Column="1" Width="100" Margin="10" Click="DescargarGestorConsultas">Recargar</Button>
+                    </Grid>
+                    <TabControl Panel.ZIndex="{Binding Path=IndicadorGestorConsultas.GridZIndex}" Background="White">
+                        <TabItem Header="Categorías">
+                            <DataGrid ItemsSource="{Binding ListaCategorias}"
+                                  AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" CanUserDeleteRows="False" 
+                                  CanUserReorderColumns="False" CanUserSortColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridCheckBoxColumn Binding="{Binding Check}" Header="Check"/>
+                                    <DataGridTextColumn Binding="{Binding Path=O.Code}" IsReadOnly="true" Header="Code"/>
+                                    <DataGridTextColumn Binding="{Binding Path=O.Name}" IsReadOnly="true" Header="Name"/>
+                                    <DataGridTextColumn Binding="{Binding Path=O.Permissions}" IsReadOnly="true" Header="Permissions"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="Consultas de usuario">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <DataGrid Grid.Column="0" ItemsSource="{Binding ListaConsultasUsuario}"
+                                  AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" CanUserDeleteRows="False" 
+                                  CanUserReorderColumns="False" CanUserSortColumns="False" SelectedItem="{Binding Path=SelectedConsultaUsuario,Mode=OneWayToSource}">
+                                    <DataGrid.Columns>
+                                        <DataGridCheckBoxColumn Binding="{Binding Check}" Header="Check"/>
+                                        <DataGridTextColumn Binding="{Binding Path=O.InternalKey}" IsReadOnly="true" Header="InternalKey"/>
+                                        <DataGridTextColumn Binding="{Binding Path=O.QueryDescription}" IsReadOnly="true" Header="QueryDescription"/>
+                                        <DataGridTextColumn Binding="{Binding Path=O.QueryType}" IsReadOnly="true" Header="QueryType"/>
+                                        <DataGridTextColumn IsReadOnly="true" Header="Query"/>
+                                        <DataGridTextColumn Binding="{Binding Path=O.CategoriaConsultaRef.Name}" IsReadOnly="true" Header="Categoría"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                                <TextBox Grid.Column="1" Text="{Binding Path=SelectedConsultaUsuario.O.Query}" IsReadOnly="True" Margin="5 0 0 0" 
+                                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+                                <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Margin="0 5" Orientation="Horizontal">
+                                    <StackPanel.Style>
+                                        <Style TargetType="{x:Type StackPanel}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=TipoBD}" Value="HANA">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+                                    <TextBlock Text="Reemplazar paquete "/>
+                                    <TextBox Width="auto" Margin="10 0 0 0" Text="{Binding Path=OldHANAViewPackageName}"/>
+                                    <TextBlock Text="...  por"/>
+                                    <TextBox Width="auto" Margin="10 0 0 0" Text="{Binding Path=NewHANAViewPackageName}"/>
+                                    <TextBlock Text="..."/>
+                                </StackPanel>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Busquedas formateadas">
+                            <DataGrid ItemsSource="{Binding ListaBusquedasFormateadas}"
+                                  AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" CanUserDeleteRows="False" 
+                                  CanUserReorderColumns="False" CanUserSortColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridCheckBoxColumn Binding="{Binding Check}" Header="Check"/>
+                                    <DataGridTextColumn Binding="{Binding Path=O.FormID}" IsReadOnly="true" Header="FormID"/>
+                                    <DataGridTextColumn Binding="{Binding Path=O.ItemID}" IsReadOnly="true" Header="ItemID"/>
+                                    <DataGridTextColumn Binding="{Binding Path=O.ColumnID}" IsReadOnly="true" Header="ColumnID"/>
+                                    <DataGridTextColumn Binding="{Binding Path=O.Action}" IsReadOnly="true" Header="Action"/>
+                                    <DataGridTextColumn Binding="{Binding Path=O.Refresh}" IsReadOnly="true" Header="Refresh"/>
+                                    <DataGridTextColumn Binding="{Binding Path=O.FieldID}" IsReadOnly="true" Header="FieldID"/>
+                                    <DataGridTextColumn Binding="{Binding Path=O.ForceRefresh}" IsReadOnly="true" Header="ForceRefresh"/>
+                                    <DataGridTextColumn Binding="{Binding Path=O.ConsultaUsuarioRef.QueryDescription}" IsReadOnly="true" Header="Query"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </TabItem>
+            <TabItem Visibility="{Binding ModeloVistaExiste}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <MediaElement Source="{Binding Path=IndicadorModeloVistas.IndicadorIcon}" Stretch="None" MediaEnded="tab_MediaEnded" LoadedBehavior="Play" UnloadedBehavior="Manual" Height="10" Width="10">
+                            <MediaElement.OpacityMask>
+                                <ImageBrush ImageSource="resources/imgs/gray-light.png"/>
+                            </MediaElement.OpacityMask>
+                        </MediaElement>
+                        <TextBlock Text="Vistas" Margin="3 0 0 0"></TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid Margin="10" >
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorModeloVistas.LoaderZIndex}" Background="White">
+                        <MediaElement LoadedBehavior="Play" UnloadedBehavior="Manual" Source="resources/imgs/downloading.gif" Width="100" Height="100" MediaEnded="download_MediaEnded"/>
+                    </Grid>
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorModeloVistas.ErrorZIndex}" Background="White" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Path=IndicadorModeloVistas.ErrorMensaje}" Grid.Row="2" Grid.Column="1" TextWrapping="WrapWithOverflow" TextAlignment="Center"/>
+                        <Image Source="/exxis_localizacion;component/resources/imgs/error_download.png" Grid.Row="1" Grid.Column="1"></Image>
+                        <Button Grid.Row="3" Grid.Column="1" Width="100" Margin="10" Click="DescargarVistas">Recargar</Button>
+                    </Grid>
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorModeloVistas.GridZIndex}" Background="White">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="1" Grid.Row="1" Margin="0 10 0 0" Orientation="Vertical" >
+                            <Image Source="/exxis_localizacion;component/resources/imgs/modelzipicono.png" Stretch="UniformToFill" Width="35" Height="35"></Image>
+                            <TextBlock Text="{Binding ModeloVistaPath}" Margin="0 10"/>
+                            <Button Margin="0 10" Padding="5 0" Click="AbrirUbicacion" Width="100">Ver ubicación</Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Visibility="{Binding ScriptsExiste}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <MediaElement Source="{Binding Path=IndicadorScripts.IndicadorIcon}" Stretch="None" MediaEnded="tab_MediaEnded" LoadedBehavior="Play" UnloadedBehavior="Manual" Height="10" Width="10">
+                            <MediaElement.OpacityMask>
+                                <ImageBrush ImageSource="resources/imgs/gray-light.png"/>
+                            </MediaElement.OpacityMask>
+                        </MediaElement>
+                        <TextBlock Text="Scripts" Margin="3 0 0 0"></TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid Margin="10" >
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorScripts.LoaderZIndex}" Background="White">
+                        <MediaElement LoadedBehavior="Play" UnloadedBehavior="Manual" Source="resources/imgs/downloading.gif" Width="100" Height="100" MediaEnded="download_MediaEnded"/>
+                    </Grid>
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorScripts.ErrorZIndex}" Background="White" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Path=IndicadorScripts.ErrorMensaje}" Grid.Row="2" Grid.Column="1" TextWrapping="WrapWithOverflow" TextAlignment="Center"/>
+                        <Image Source="/exxis_localizacion;component/resources/imgs/error_download.png" Grid.Row="1" Grid.Column="1"></Image>
+                        <Button Grid.Row="3" Grid.Column="1" Width="100" Margin="10" Click="DescargarScripts">Recargar</Button>
+                    </Grid>
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorScripts.GridZIndex}" Background="White">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="300"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <DataGrid ItemsSource="{Binding ListaScripts}"
+                                  AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" CanUserDeleteRows="False" 
+                                  CanUserReorderColumns="False" CanUserSortColumns="False" SelectedItem="{Binding Path=SelectedScript,Mode=OneWayToSource}">
+                            <DataGrid.Columns>
+                                <DataGridCheckBoxColumn Binding="{Binding Check}" Header="Check"/>
+                                <DataGridTextColumn Binding="{Binding FolderPath}" IsReadOnly="true" Header="FolderPath"/>
+                                <DataGridTextColumn Binding="{Binding FileName}" IsReadOnly="true" Header="FileName"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <TextBox Grid.Column="1" Text="{Binding Path=SelectedScript.Content}" IsReadOnly="True" Margin="10 0 0 0" 
+                                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+                        <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Margin="0 10 0 0" Orientation="Horizontal">
+                            <StackPanel.Style>
+                                <Style TargetType="{x:Type StackPanel}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=TipoBD}" Value="HANA">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <TextBlock Text="Reemplazar paquete "/>
+                            <TextBox Width="auto" Margin="10 0 0 0" Text="{Binding Path=OldHANAViewPackageName}"/>
+                            <TextBlock Text="...  por"/>
+                            <TextBox Width="auto" Margin="10 0 0 0" Text="{Binding Path=NewHANAViewPackageName}"/>
+                            <TextBlock Text="..."/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Visibility="{Binding FormatosElectronicosExiste}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <MediaElement x:Name="tbGEP" Source="{Binding Path=IndicadorGEP.IndicadorIcon}" Stretch="None" MediaEnded="tab_MediaEnded" LoadedBehavior="Play" UnloadedBehavior="Manual" Height="10" Width="10">
+                            <MediaElement.OpacityMask>
+                                <ImageBrush ImageSource="resources/imgs/gray-light.png"/>
+                            </MediaElement.OpacityMask>
+                        </MediaElement>
+                        <TextBlock Text="GEP" Margin="3 0 0 0"></TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid Margin="10" >
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorGEP.LoaderZIndex}" Background="White">
+                        <MediaElement LoadedBehavior="Play" UnloadedBehavior="Manual" Source="resources/imgs/downloading.gif" Width="100" Height="100" MediaEnded="download_MediaEnded"/>
+                    </Grid>
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorGEP.ErrorZIndex}" Background="White" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Path=IndicadorGEP.ErrorMensaje}" Grid.Row="2" Grid.Column="1" TextWrapping="WrapWithOverflow" TextAlignment="Center"/>
+                        <Image Source="/exxis_localizacion;component/resources/imgs/error_download.png" Grid.Row="1" Grid.Column="1"></Image>
+                        <Button Grid.Row="3" Grid.Column="1" Width="100" Margin="10" Click="DescargarGEP">Recargar</Button>
+                    </Grid>
+                    <DataGrid Name="dgvGEP" AutoGenerateColumns="False" ItemsSource="{Binding ListaFormatoElectronicos}" 
+                              CanUserAddRows="False" HeadersVisibility="Column" CanUserDeleteRows="False" 
+                              CanUserReorderColumns="False" CanUserSortColumns="False" Panel.ZIndex="{Binding Path=IndicadorGEP.GridZIndex}">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Binding="{Binding Check}" Header="Check"/>
+                            <DataGridTextColumn Binding="{Binding Path=O.Name}" IsReadOnly="true" Header="Name"/>
+                            <DataGridTextColumn Binding="{Binding Path=O.FileName}" IsReadOnly="true" Header="FileName"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Visibility="{Binding CrystalsExiste}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <MediaElement x:Name="tbCrystal" Source="{Binding Path=IndicadorCrystal.IndicadorIcon}" Stretch="None" MediaEnded="tab_MediaEnded" LoadedBehavior="Play" UnloadedBehavior="Manual" Height="10" Width="10">
+                            <MediaElement.OpacityMask>
+                                <ImageBrush ImageSource="resources/imgs/gray-light.png"/>
+                            </MediaElement.OpacityMask>
+                        </MediaElement>
+                        <TextBlock Text="Crystal" Margin="3 0 0 0"></TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <Grid Margin="10">
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorCrystal.LoaderZIndex}" Background="White">
+                        <MediaElement LoadedBehavior="Play" UnloadedBehavior="Manual" Source="resources/imgs/downloading.gif" Width="100" Height="100" MediaEnded="download_MediaEnded"/>
+                    </Grid>
+                    <Grid Panel.ZIndex="{Binding Path=IndicadorCrystal.ErrorZIndex}" Background="White" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Path=IndicadorCrystal.ErrorMensaje}" Grid.Row="2" Grid.Column="1" TextWrapping="WrapWithOverflow" TextAlignment="Center"/>
+                        <Image Source="/exxis_localizacion;component/resources/imgs/error_download.png" Grid.Row="1" Grid.Column="1"></Image>
+                        <Button Grid.Row="3" Grid.Column="1" Width="100" Margin="10" Click="DescargarCrystals">Recargar</Button>
+                    </Grid>
+                    <DataGrid Panel.ZIndex="{Binding Path=IndicadorCrystal.GridZIndex}" ItemsSource="{Binding ListaCrystals}"
+                              AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" CanUserDeleteRows="False" 
+                              CanUserReorderColumns="False" CanUserSortColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Binding="{Binding Check}" Header="Check"/>
+                            <!--<DataGridTextColumn Binding="{Binding Path=O.Title}" IsReadOnly="true" Header="Título"/>-->
+                            <DataGridTextColumn Binding="{Binding Path=O.MenuPath}" IsReadOnly="true" Header="Ruta de menu"/>
+                            <DataGridTextColumn Binding="{Binding Path=O.FileName}" IsReadOnly="true" Header="Archivo"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

@@ -1,0 +1,31 @@
+﻿SELECT CASE WHEN COALESCE(T0."SubMenu",'') = 'Y' then COALESCE('/' || T0."Name",'') ELSE '' END ||  
+	   CASE WHEN COALESCE(T1."SubMenu",'') = 'Y' then COALESCE('/' || T1."Name",'') ELSE '' END ||  
+	   CASE WHEN COALESCE(T2."SubMenu",'') = 'Y' then COALESCE('/' || T2."Name",'') ELSE '' END ||
+	   CASE WHEN COALESCE(T3."SubMenu",'') = 'Y' then COALESCE('/' || T3."Name",'') ELSE '' END ||
+	   CASE WHEN COALESCE(T4."SubMenu",'') = 'Y' then COALESCE('/' || T4."Name",'') ELSE '' END as "Ruta",
+	   CASE WHEN COALESCE(T0."SubMenu",'') = 'N' then COALESCE(T0."Name",'') ELSE '' END ||  
+	   CASE WHEN COALESCE(T1."SubMenu",'') = 'N' then COALESCE(T1."Name",'') ELSE '' END ||  
+	   CASE WHEN COALESCE(T2."SubMenu",'') = 'N' then COALESCE(T2."Name",'') ELSE '' END ||
+	   CASE WHEN COALESCE(T3."SubMenu",'') = 'N' then COALESCE(T3."Name",'') ELSE '' END ||
+	   CASE WHEN COALESCE(T4."SubMenu",'') = 'N' then COALESCE(T4."Name",'') ELSE '' END as "Titulo",
+	   CASE WHEN COALESCE(T0."SubMenu",'') = 'N' then COALESCE(T0."ObjectKey",'') ELSE '' END ||  
+	   CASE WHEN COALESCE(T1."SubMenu",'') = 'N' then COALESCE(T1."ObjectKey",'') ELSE '' END ||  
+	   CASE WHEN COALESCE(T2."SubMenu",'') = 'N' then COALESCE(T2."ObjectKey",'') ELSE '' END ||
+	   CASE WHEN COALESCE(T3."SubMenu",'') = 'N' then COALESCE(T3."ObjectKey",'') ELSE '' END ||
+	   CASE WHEN COALESCE(T4."SubMenu",'') = 'N' then COALESCE(T4."ObjectKey",'') ELSE '' END as "Codigo"
+FROM "OCMN" T0 LEFT JOIN "OCMN" T1 ON T0."GUID" = T1."Father"
+			   LEFT JOIN "OCMN" T2 ON T1."GUID" = T2."Father"
+			   LEFT JOIN "OCMN" T3 ON T2."GUID" = T3."Father"
+			   LEFT JOIN "OCMN" T4 ON T3."GUID" = T4."Father"
+			   INNER JOIN "RDOC" T10 ON T10."DocCode" = (CASE WHEN COALESCE(T0."SubMenu",'') = 'N' then COALESCE(T0."ObjectKey",'') ELSE '' END ||  
+													   CASE WHEN COALESCE(T1."SubMenu",'') = 'N' then COALESCE(T1."ObjectKey",'') ELSE '' END ||  
+													   CASE WHEN COALESCE(T2."SubMenu",'') = 'N' then COALESCE(T2."ObjectKey",'') ELSE '' END ||
+													   CASE WHEN COALESCE(T3."SubMenu",'') = 'N' then COALESCE(T3."ObjectKey",'') ELSE '' END ||
+													   CASE WHEN COALESCE(T4."SubMenu",'') = 'N' then COALESCE(T4."ObjectKey",'') ELSE '' END)
+WHERE T0."Father" = ${menuPadreGUID} AND
+	  (CASE WHEN COALESCE(T0."SubMenu",'') = 'N' then COALESCE(T0."Type",'') ELSE '' END ||  
+	   CASE WHEN COALESCE(T1."SubMenu",'') = 'N' then COALESCE(T1."Type",'') ELSE '' END ||  
+	   CASE WHEN COALESCE(T2."SubMenu",'') = 'N' then COALESCE(T2."Type",'') ELSE '' END ||
+	   CASE WHEN COALESCE(T3."SubMenu",'') = 'N' then COALESCE(T3."Type",'') ELSE '' END ||
+	   CASE WHEN COALESCE(T4."SubMenu",'') = 'N' then COALESCE(T4."Type",'') ELSE '' END ) = 'C' AND 
+	  T10."DocName" = ${titulo}
