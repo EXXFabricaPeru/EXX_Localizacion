@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "exxis_localizacion", "exxis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExxisBibliotecaClases", "ExxisBibliotecaClases\ExxisBibliotecaClases.csproj", "{0F56C04C-8A4A-460E-BDA2-662A6723209C}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup_Localizacion", "Setup_Localizacion\Setup_Localizacion.vdproj", "{846D5B0C-5525-439D-81A7-1D3EE008849E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,12 @@ Global
 		{0F56C04C-8A4A-460E-BDA2-662A6723209C}.Release|x64.Build.0 = Release|x64
 		{0F56C04C-8A4A-460E-BDA2-662A6723209C}.Release|x86.ActiveCfg = Release|x86
 		{0F56C04C-8A4A-460E-BDA2-662A6723209C}.Release|x86.Build.0 = Release|x86
+		{846D5B0C-5525-439D-81A7-1D3EE008849E}.Debug|Any CPU.ActiveCfg = Debug
+		{846D5B0C-5525-439D-81A7-1D3EE008849E}.Debug|x64.ActiveCfg = Debug
+		{846D5B0C-5525-439D-81A7-1D3EE008849E}.Debug|x86.ActiveCfg = Debug
+		{846D5B0C-5525-439D-81A7-1D3EE008849E}.Release|Any CPU.ActiveCfg = Release
+		{846D5B0C-5525-439D-81A7-1D3EE008849E}.Release|x64.ActiveCfg = Release
+		{846D5B0C-5525-439D-81A7-1D3EE008849E}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

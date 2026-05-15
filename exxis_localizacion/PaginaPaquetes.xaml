@@ -44,7 +44,7 @@
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="3">
-            <Button Name="btnContinuar" Width="90" Click="btnContinuar_Click">Continuar</Button>
+            <Button Name="btnContinuar" Width="90" Click="btnContinuar_Click" Height="30" VerticalAlignment="Top">Continuar</Button>
         </StackPanel>
     </Grid>
 </Page>

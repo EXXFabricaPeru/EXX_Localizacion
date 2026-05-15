@@ -78,7 +78,7 @@ namespace exxis_localizacion.datasource
             // ID CAMPOS DE USUARIO : https://docs.google.com/spreadsheets/d/1XnFUvDPZQjSRmY9dUMpyUjQ9qRt-x7th3ofP2FeH4qE/edit#gid=1340305812
 
             List<CampoUsuarioWrp> campos = new List<CampoUsuarioWrp>();
-
+            int ind = 0;
             try
             {
                 GoogleService google = new GoogleService();
@@ -115,7 +115,7 @@ namespace exxis_localizacion.datasource
                             ValoresValidos = new List<ValorValido>()
                         }
                     };
-
+                 
                     IList<IList<object>> vvlocal = valoresvalidos.Where(x => Convert.ToInt16(x[0]) == campo.O.FieldId &&
                                                                               Convert.ToString(x[1]).Trim().CompareTo(campo.O.Tabla) == 0)
                                                          .ToList();
@@ -130,6 +130,7 @@ namespace exxis_localizacion.datasource
                         );
                     }
                     campos.Add(campo);
+                    ind++;
                 }
             }
             catch (RecursoNoEncontradoException ex)
@@ -540,7 +541,7 @@ namespace exxis_localizacion.datasource
             }
             return lista;
         }
-        public IDictionary<string, object> GetUserTablesData()
+        public IDictionary<string, object> GetUserTablesDataBK()
         {
             // ID Datos de tablas : https://docs.google.com/spreadsheets/d/1wiumnvddBHynlQtoUYDWSs4YqhCexVomYoI50l84Usg/edit#gid=0
 
@@ -584,6 +585,115 @@ namespace exxis_localizacion.datasource
 
             return datos;
         }
+
+        public List<DatosTablaUsuarioWrp> GetUserTablesData(SAPbobsCOM.Company SB1Company)
+        {
+            // ID Datos de tablas : https://docs.google.com/spreadsheets/d/1wiumnvddBHynlQtoUYDWSs4YqhCexVomYoI50l84Usg/edit#gid=0
+
+            List<DatosTablaUsuarioWrp> datosfinales = new List<DatosTablaUsuarioWrp>();
+            IDictionary<string, object> datos = new Dictionary<string, object>();
+
+            try
+            {
+                GoogleService google = new GoogleService();
+                var service = google.getGoogle_Proxy_SheetService();
+                string spreadsheetId = PaqueteActual.DatosTablasUsuarioId; //"1wiumnvddBHynlQtoUYDWSs4YqhCexVomYoI50l84Usg";
+                if (String.IsNullOrEmpty(spreadsheetId))
+                {
+                    throw new RecursoNoEncontradoException("No se han encontrado DATOS DE OBJETOS DE USUARIO");
+                }
+
+                Spreadsheet sheet_metadata = service.Spreadsheets.Get(spreadsheetId).Execute();
+                IList<Sheet> hojas = sheet_metadata.Sheets;
+
+                //extracción de hojas de cálculo
+                IDictionary<string, object> tablas = new Dictionary<string, object>();
+                foreach (Sheet hoja in hojas)
+                {
+                    string hojaNombre = hoja.Properties.Title;
+                    //Selecciona máximo rango (ZZ), la extracción de data sólo considerará el rango usado.
+                    tablas.Add(hojaNombre, getValues(service, spreadsheetId, $"{hojaNombre}!A:ZZ"));
+                }
+                logger.Debug($"GetUserDatatableData: se han extraído {tablas.Count} hojas");
+
+                foreach (KeyValuePair<string, object> tabla in tablas)
+                {
+                    IList<IList<object>> datostabla = (IList<IList<object>>)tabla.Value;
+
+                    string codigo = tabla.Key;
+
+                    if (datostabla == null || datostabla.Count == 0)
+                    {
+                        logger.Warn($"GetUserDatatableData: {codigo} no tiene datos para procesar");
+                        continue;
+                    }
+
+                    SAPbobsCOM.IUserTablesMD objectsMD = null;
+                    try
+                    {
+                        objectsMD = (SAPbobsCOM.IUserTablesMD)SB1Company.GetBusinessObject(SAPbobsCOM.BoObjectTypes.oUserTables);
+                        if (!objectsMD.GetByKey(codigo))
+                        {
+                            logger.Warn($"GetUserDatatableData: Tabla de usuario \"{codigo}\" no ha sido encontrado en la sociedad actual");
+                            continue;
+                        }
+
+                        String campollave = "Code";
+                        IList<IList<object>> datoscabecera = (IList<IList<object>>)tabla.Value;
+
+                        DatosTablaUsuarioWrp dow = new DatosTablaUsuarioWrp() { O = new DatosTabla() { Nombre = codigo } };
+
+                        for (int i = 2; i < datoscabecera.Count; i++)
+                        {
+                            IList<object> filacab = datoscabecera[0];
+                            int icampollave = filacab.IndexOf(campollave);
+                            if (icampollave < 0)
+                            {
+                                throw new Exception($"No se ha encontrado el campo llave \"{campollave}\" en la hoja \"{codigo}\"");
+                            }
+
+                            string valorllave = datoscabecera[i][icampollave].ToString();
+
+                            RegistroTabla fila = new RegistroTabla();
+                            IList<object> filaSource = datoscabecera[i];
+                            for (int j = 0; j < filacab.Count; j++)
+                            {
+                                string nombre = filacab[j].ToString();
+                                object valor = (j < filaSource.Count ? filaSource[j] : null);
+                                fila.Campos.Add(nombre, valor);
+                            }
+                            dow.O.Registros.Add(fila);
+                        }
+                        datosfinales.Add(dow);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error("GetUserDatatableData", ex);
+                    }
+                    finally
+                    {
+                        Common.LiberarObjeto(objectsMD);
+                    }
+                }
+                
+            }
+            catch (RecursoNoEncontradoException ex)
+            {
+                logger.Info($"GetUserTablesData: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                logger.Error("GetUserTablesData", ex);
+                throw ex;
+            }
+            finally
+            {
+                GC.Collect();
+            }
+
+            return datosfinales;
+        }
+
         public List<DatosObjetoWrp> GetUserObjectsData(SAPbobsCOM.Company SB1Company)
         {
             // ID Datos de Objetos de usuario : https://docs.google.com/spreadsheets/d/1TZ_63vFi3fvQ98ZafxpBeUAcPD0Q0qUDx1WpJIBVWIU/edit#gid=1206145661
@@ -683,7 +793,7 @@ namespace exxis_localizacion.datasource
                             ///Registrando datos de los hijos                    
                             foreach (KeyValuePair<string, object> tablahija in tablashijas)
                             {
-                                DatosTabla dst = new DatosTabla() { Nombre = tablahija.Key };
+                                DatosTablaUDO dst = new DatosTablaUDO() { Nombre = tablahija.Key };
                                 List<IList<object>> datostablahijafull = ((IList<IList<object>>)tablahija.Value).ToList();
 
                                 //se extrae lo regitros excepto la primera y segunda fila                        
@@ -928,7 +1038,7 @@ namespace exxis_localizacion.datasource
 
             } while (pageToken != null);
         }
-        
+
         public List<Script> GetScriptListNew(string bdtype)
         {
             // ID CARPETA SCRIPT : https://drive.google.com/drive/folders/1ibPXPG8gZm-aP3demCQ5Dvu7zPa6AZZb

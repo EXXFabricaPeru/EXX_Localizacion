@@ -1,4 +1,5 @@
 ﻿using exxis_localizacion.entidades;
+using ExxisBibliotecaClases.entidades;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +18,8 @@ namespace exxis_localizacion.datasource
         List<CategoriaConsultaWrp> GetQueryCategoryList();
         List<ConsultaUsuarioWrp> GetUserQueryList(List<CategoriaConsultaWrp> listaCategoriaConsulta, string bdtype);
         List<BusquedaFormateadaWrp> GetFormattedSearchList(List<ConsultaUsuarioWrp> listaConsultaUsuario);
-        IDictionary<string, object> GetUserTablesData();
+        //IDictionary<string, object> GetUserTablesData();
+        List<DatosTablaUsuarioWrp> GetUserTablesData(SAPbobsCOM.Company sB1Company);
         List<DatosObjetoWrp> GetUserObjectsData(SAPbobsCOM.Company sB1Company);
         List<FormatoElectronicoWrp> GetElectronicFormatList();
         List<FormatoCrystalWrp> GetCrystalFormatList(string bdtype);

@@ -1,5 +1,9 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Xml.Linq;
 using ExxisBibliotecaClases.metodos;
 using SAPbobsCOM;
 
@@ -21,7 +25,35 @@ namespace ExxisBibliotecaClases
             try
             {
                 ufapp = (UserFieldsMD)_company.GetBusinessObjectFromXML(xmlpath, i);
+                string xmlContent = File.ReadAllText(xmlpath, Encoding.UTF8);
+                xmlContent = xmlContent.Trim('\0', '\uFEFF', '\u200B');
+                XDocument doc = XDocument.Parse(xmlContent);
+                // Obtener nodos de valores válidos
+                var validValues = doc
+                    .Descendants("ValidValues")
+                    .Descendants("row")
+                    .ToList();
+
+                // Agregar valores válidos al objeto SAP
+                for (int j = 0; j < validValues.Count; j++)
+                {
+                    var row = validValues[j];
+
+                    string value = row.Element("Value")?.Value ?? "";
+                    string description = row.Element("Description")?.Value ?? "";
+
+                    if (j > 0)
+                    {
+                        ufapp.ValidValues.Add();
+                        ufapp.ValidValues.SetCurrentLine(j);
+                    }
+
+                    ufapp.ValidValues.Value = value;
+                    ufapp.ValidValues.Description = description;
+                }
+
                 ufcmp = (UserFieldsMD)_company.GetBusinessObject(BoObjectTypes.oUserFields);
+                
                 if (Buscar(ufapp.TableName, ufapp.Name, ref ufcmp))
                 {
                     if (Accion == "R")
@@ -119,14 +151,15 @@ namespace ExxisBibliotecaClases
                     vvcmp.SetCurrentLine(0);
                     vvcmp.Delete();
                 }
-                SAPbobsCOM.ValidValuesMD vvapp = ufapp.ValidValues;
-                for (int i = 0; i < vvapp.Count; i++)
+                //SAPbobsCOM.ValidValuesMD vvapp = ufapp.ValidValues;
+                int cas = ufapp.ValidValues.Count;
+                for (int i = 0; i < ufapp.ValidValues.Count; i++)
                 {
-                    vvapp.SetCurrentLine(i);
-                    if (!String.IsNullOrEmpty(vvapp.Value) && !String.IsNullOrEmpty(vvapp.Description))
+                    ufapp.ValidValues.SetCurrentLine(i);
+                    if (!String.IsNullOrEmpty(ufapp.ValidValues.Value) && !String.IsNullOrEmpty(ufapp.ValidValues.Description))
                     {
-                        vvcmp.Value = vvapp.Value;
-                        vvcmp.Description = vvapp.Description;
+                        vvcmp.Value = ufapp.ValidValues.Value;
+                        vvcmp.Description = ufapp.ValidValues.Description;
                         vvcmp.Add();
                     }
                 }

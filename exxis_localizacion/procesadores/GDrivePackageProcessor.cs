@@ -32,21 +32,21 @@ namespace exxis_localizacion.procesadores
             {
                 logger.Info($"EjecutarProcesos: Procesando paquete '{paquete.Nombre}' ({paquete.TipoBD})");
                 bool eshana = paquete.TipoBD.CompareTo("HANA") == 0;
-                _maxContadorGeneral = 11 + (eshana ? 1 : 0);
+                _maxContadorGeneral = 7 + (eshana ? 1 : 0);
                 EnviarProgreso(0, 100, "", DecorarEtiqueta(paquete.Nombre.ToUpper(), 1), false);
-                ProcesarTablas();
-                ProcesarCampos();
-                ProcesarObjetos();
-                ProcesarDatosTablasUsuario();
-                ProcesarDatosObjetosUsuario();
-                ProcesarCategoriasConsultasUsuario();
-                ProcesarConsultasUsuario();
-                ProcesarBusquedasFormateadas();
-                if (eshana) ProcesarVistas();
-                ProcesarScriptsNew();
-                //ProcesarScripts();
-                ProcesarGEP();
-                ProcesarCrystal();
+                ProcesarTablas(); //OK
+                ProcesarCampos(); //OK
+                ProcesarObjetos(); //OK
+                ProcesarDatosTablasUsuario(); //OK
+                ProcesarDatosObjetosUsuario(); //Corregir plantilla | hay errores: faltan campos, los id de cab y det no coinciden
+                ProcesarCategoriasConsultasUsuario(); //OK
+                ProcesarConsultasUsuario(); //Faltan querys
+                ProcesarBusquedasFormateadas(); //Sin probar, no se tiene plantilla de ejemplo
+                if (eshana) ProcesarVistas();//No implementado
+                ProcesarScriptsNew(); //Faltan querys
+                ProcesarScripts(); //Obsoleto
+                ProcesarGEP(); //Sin probar
+                ProcesarCrystal();//No funciona
 
                 EnviarProgreso(100, 100, "", "\n", false);
             }
@@ -120,6 +120,10 @@ namespace exxis_localizacion.procesadores
                     String resultadoTexto = "";
                     String mensaje = $"Agregando campo de usuario {ufd.O.Tabla}.{ufd.O.Codigo}...";
                     logger.Info($"ProcesarCampos: {mensaje}");
+
+                    if (ufd.O.Tabla == "OCRD" && ufd.O.FieldId == 4)
+                    { }
+
                     if (!ProcesarCampo(ufd.O, out String errorMsg, ufd.Accion))
                     {
                         resultadoTexto = errorMsg;
@@ -187,7 +191,7 @@ namespace exxis_localizacion.procesadores
             }
             catch (Exception ex)
             {
-                errorMsg = $"[Error] Objeto relacionado: {ex.Message}";
+                errorMsg = $"[Error] Campo \"{ufdo.Tabla}\".\"{ufdo.Codigo}\" Objeto relacionado: {ex.Message}";
                 logger.Error("ProcesarCampo", ex);
                 return false;
             }
@@ -241,7 +245,7 @@ namespace exxis_localizacion.procesadores
 
             EnviarProgreso(0, 100, "Preparando...", "\n" + DecorarEtiqueta("DATOS DE TABLAS DE USUARIO", 2), false);
 
-            List<DatosTabla> datos = paquete.ListaDatosTablas;
+            List<DatosTablaUsuarioWrp> datos = paquete.ListaDatosTablas;
 
             int contador = 0;
             int contadorOK = 0;
@@ -249,29 +253,26 @@ namespace exxis_localizacion.procesadores
 
             if (datos.Count > 0)
             {
-                //foreach (DatosTabla tabla in datos)
-                //{
-                //    IList<IList<object>> datostabla = (IList<IList<object>>)tabla.Value;
-
-                //    if (datostabla == null || datostabla.Count == 0)
-                //    {
-                //        throw new Exception("No hay datos para procesar");
-                //    }
-
-                //    String mensaje = $"Agregando datos de tablas de usuario \"{tabla.Key}\" ...";
-                //    logger.Info($"ProcesarDatosTablasUsuario: {mensaje}");
-                //    EnviarProgreso(contador, maxContadorParcial, mensaje, "", false);
-                //    List<string> errorMsgs = new List<string>();
-                //    if (!_SB1DataAccess.AddUserTableData(tabla.Key, (IList<IList<object>>)tabla.Value, ref errorMsgs))
-                //    {
-                //        foreach (string errMsg in errorMsgs)
-                //        {
-                //            EnviarProgreso(contador, maxContadorParcial, mensaje, errMsg, false);
-                //        }
-                //    }
-                //    contador++;
-                //    EnviarProgreso(contador, maxContadorParcial, mensaje, "", false);
-                //}
+                foreach (DatosTablaUsuarioWrp datosobjeto in datos)
+                {
+                    String mensaje = $"Agregando datos de tablas de usuario \"{datosobjeto.O.Nombre}\" ...";
+                    if (datosobjeto.O.Registros.Count > 0)
+                    {
+                        logger.Info($"ProcesarDatosTablasUsuario: {mensaje}");
+                        EnviarProgreso(contador, maxContadorParcial, mensaje, "", false);
+                        List<string> errorMsgs = new List<string>();
+                        if (!_SB1DataAccess.AddUserTableData2(datosobjeto.O, ref errorMsgs))
+                        {
+                            foreach (string errMsg in errorMsgs)
+                            {
+                                EnviarProgreso(contador, maxContadorParcial, mensaje, errMsg, false);
+                            }
+                        }
+                        else contadorOK++;
+                    }
+                    contador++;
+                    EnviarProgreso(contador, maxContadorParcial, mensaje, "", false);
+                }
                 EnviarProgreso(0, 100, "", DecorarEtiqueta($"{contadorOK} de {maxContadorParcial} DATOS DE TABLAS DE USUARIO procesados correctamente", 3), false);
             }
             else

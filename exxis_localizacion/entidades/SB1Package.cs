@@ -169,8 +169,8 @@ namespace exxis_localizacion.entidades
             }
         }
 
-        private List<DatosTabla> _listaDatosTablas;
-        public List<DatosTabla> ListaDatosTablas
+        private List<DatosTablaUsuarioWrp> _listaDatosTablas;
+        public List<DatosTablaUsuarioWrp> ListaDatosTablas
         {
             get { return _listaDatosTablas; }
             set
@@ -180,6 +180,17 @@ namespace exxis_localizacion.entidades
             }
         }
         public ObjetoStats IndicadorDatosTablas { get; private set; } = new ObjetoStats();
+        private int _datosDatatableSelectedIndex;
+        public int DatosDatatableSelectedIndex
+        {
+            get { return _datosDatatableSelectedIndex; }
+            set
+            {
+                _datosDatatableSelectedIndex = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("DatosObjetosSelectedIndex"));
+            }
+        }
+
         public string DatosTablasUsuarioId { get; internal set; }
         public System.Windows.Visibility DatosTablasExiste
         {
@@ -189,7 +200,7 @@ namespace exxis_localizacion.entidades
             }
             set { }
         }
-
+        //DatosDatatableSelectedIndex
         private List<DatosObjetoWrp> _listaDatosObjetos;
         public List<DatosObjetoWrp> ListaDatosObjetos
         {
@@ -485,10 +496,9 @@ namespace exxis_localizacion.entidades
             Thread T = new Thread(new ThreadStart(() => {
                 try
                 {
-                    //Paquete.ListaDatosTablas = resourceGrabber.GetUserObjectsData(_frmPrincipal.SB1DataAccess.SB1Company);
-                    ListaDatosTablas = new List<DatosTabla>();
-                    throw new Exception("Datos no disponibles");
+                    ListaDatosTablas = resourceGrabber.GetUserTablesData(_sb1Company);
                     IndicadorDatosTablas.SetSucessMode();
+                    DatosDatatableSelectedIndex = 0;
                 }
                 catch (Exception ex)
                 {

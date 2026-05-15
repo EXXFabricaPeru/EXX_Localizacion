@@ -129,8 +129,8 @@
     <Reference Include="CrystalDecisions.VSDesigner, Version=13.0.3500.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.Web, Version=13.0.3500.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.Windows.Forms, Version=13.0.3500.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
-    <Reference Include="DotNetZip, Version=1.13.7.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetZip.1.13.7\lib\net40\DotNetZip.dll</HintPath>
+    <Reference Include="DotNetZip, Version=1.16.0.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetZip.1.16.0\lib\net40\DotNetZip.dll</HintPath>
     </Reference>
     <Reference Include="Google.Apis, Version=1.44.1.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Apis.1.44.1\lib\net45\Google.Apis.dll</HintPath>
@@ -166,6 +166,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -196,6 +197,7 @@
     <Compile Include="entidades\CategoriaConsultaWrp.cs" />
     <Compile Include="entidades\ConsultaUsuarioWrp.cs" />
     <Compile Include="entidades\DatosObjetoWrp.cs" />
+    <Compile Include="entidades\DatosTablaUsuarioWrp.cs" />
     <Compile Include="entidades\FormatoCrystalWrp.cs" />
     <Compile Include="entidades\FormatoElectronicoWrp.cs" />
     <Compile Include="entidades\ItemExecutedEventArgs.cs" />
@@ -306,23 +308,37 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\imgs\sidepanel.jpg" />
+    <Resource Include="resources\imgs\sidepanel.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="resources\imgs\blackArrow.png" />
+    <Resource Include="resources\imgs\blackArrow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="resources\imgs\downloading.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="resources\imgs\SAPHANAModelManagement.png" />
+    <Resource Include="resources\imgs\SAPHANAModelManagement.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <EmbeddedResource Include="resources\queries\GetReportMenuInfo_hana.sql" />
     <EmbeddedResource Include="resources\queries\GetReportMenuInfo_mssql.sql" />
-    <Resource Include="resources\imgs\error_download.png" />
-    <Resource Include="resources\imgs\modelzipicono.png" />
+    <Resource Include="resources\imgs\error_download.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="resources\imgs\modelzipicono.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="resources\imgs\red-light.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="resources\imgs\yellow-light.png" />
-    <Resource Include="resources\imgs\icono.png" />
+    <Resource Include="resources\imgs\yellow-light.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="resources\imgs\icono.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="resources\imgs\green-light.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

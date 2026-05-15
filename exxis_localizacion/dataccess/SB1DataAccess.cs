@@ -484,6 +484,111 @@ namespace exxis_localizacion.dataccess
                 Common.LiberarObjeto(oUserTable);
             }
         }
+
+        public bool AddUserTableData2(DatosTabla datosobj, ref List<string> errorMessages)
+        {
+            SAPbobsCOM.UserTable oUserTable = null;
+            try
+            {
+                try
+                {
+                    oUserTable = SB1Company.UserTables.Item(datosobj.Nombre);
+                }
+                catch (Exception ex)
+                {
+                    logger.Warn($"AddUserTableData: tabla \"{datosobj.Nombre}\" no existe. {ex.Message}");
+                    return true;
+                }
+
+                //DATOS DE CABECERA
+                //se obvia las 2 primeras filas que contiene las cabeceras
+                foreach (RegistroTabla regObj in datosobj.Registros)
+                {
+                    KeyValuePair<string, object> regllave = regObj.Campos.FirstOrDefault(x => x.Key.CompareTo("Code") == 0);
+                    String valorllave = regllave.Value.ToString();
+
+                    bool existe = false;
+                    if (oUserTable.GetByKey(valorllave))
+                    {
+                        existe = true;
+                    }
+
+                    if (!oUserTable.GetByKey("-"))
+                    {
+                        string Accion = string.Empty;
+                        foreach (KeyValuePair<string, object> campo in regObj.Campos)
+                        {
+                            if (campo.Value != null && !string.IsNullOrWhiteSpace(campo.Value.ToString()))
+                            {
+                                switch (campo.Key)
+                                {
+                                    case "Accion":
+                                        Accion = campo.Value.ToString();
+                                        break;
+                                    case "Code":
+                                        oUserTable.Code = campo.Value.ToString();
+                                        break;
+                                    case "Name":
+                                        oUserTable.Name = campo.Value.ToString();
+                                        break;
+                                    default:
+                                        oUserTable.UserFields.Fields.Item(campo.Key).Value = campo.Value;
+                                        break;
+                                }
+                            }
+                        }
+                        string errorMessage = "";
+                        int ret = 0;
+
+                        try
+                        {
+                            if (Accion == "R")
+                            {
+                                if (existe)
+                                {
+                                    errorMessage = "No se pudo eliminar";
+                                    oUserTable.Remove();
+                                    errorMessage = "eliminado con éxito";
+                                }
+                            }
+                            else
+                            {
+                                if (!existe)
+                                {
+                                    errorMessage = "No se pudo agregar";
+                                    ret = oUserTable.Add();
+                                    errorMessage = "insertado con éxito";
+                                }
+                                else
+                                {
+                                    errorMessage = "No se pudo actualizar";
+                                    ret = oUserTable.Update();
+                                    errorMessage = "actualizado con éxito";
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error($"AddUserObjectData: XML = > {oUserTable.GetAsXML()}");
+                            errorMessage = $"[ERROR] Registro {datosobj.Nombre}[{valorllave}] {ex.Message}";
+                            errorMessages.Add(errorMessage);
+                            logger.Error($"AddUserTableData: {errorMessage}");
+                        }
+                    }
+                }
+                return (errorMessages.Count == 0);
+            }
+            catch (Exception ex)
+            {
+                logger.Error("AddUserTableData", ex);
+                throw ex;
+            }
+            finally
+            {
+                Common.LiberarObjeto(oUserTable);
+            }
+        }
+
         public bool AddUserObjectData(DatosObjeto datosobj, ref List<string> errorMessages)
         {
             SAPbobsCOM.GeneralService objService = null;
@@ -534,7 +639,7 @@ namespace exxis_localizacion.dataccess
 
 
                     //Asignando TABLAS HIJAS
-                    foreach (DatosTabla childtable in regObj.TablasHijas)
+                    foreach (DatosTablaUDO childtable in regObj.TablasHijas)
                     {
                         SAPbobsCOM.GeneralDataCollection oChild = oCab.Child(childtable.Nombre);
 
